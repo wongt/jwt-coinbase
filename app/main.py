@@ -23,6 +23,10 @@ class TokenResponse(BaseModel):
     request_path: str
     date: str
 
+@app.get("/", include_in_schema=False)
+def root():
+    return {"service": "jwt-coinbase", "status": "ok"}
+
 @app.post("/token", response_model=TokenResponse)
 def create_token(body: TokenRequest):
     if not API_KEY_ID or not API_KEY_SECRET:
