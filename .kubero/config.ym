@@ -1,0 +1,3 @@
+build:
+  builder: docker        # force Dockerfile-based build (no Node buildpack)
+  dockerfile: Dockerfile # path to your Dockerfile
