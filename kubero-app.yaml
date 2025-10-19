@@ -1,0 +1,41 @@
+apiVersion: kubero.dev/v1alpha1
+kind: App
+metadata:
+  name: jwt-coinbase
+  namespace: jwt-coinbase
+spec:
+  image:
+    repository: registry.linjitsu.net/jwt-coinbase
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  replicas: 1
+  service:
+    port: 8080
+    targetPort: 8080
+  ingress:
+    enabled: true
+    host: jwt.coinbase.linjitsu.net
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+  envFrom:
+    - secretRef:
+        name: jwt-coinbase-secret
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "250m"
+      memory: "256Mi"
+  livenessProbe:
+    path: /healthz
+    port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  readinessProbe:
+    path: /healthz
+    port: 8080
+    initialDelaySeconds: 3
+    periodSeconds: 5

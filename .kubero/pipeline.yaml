@@ -1,0 +1,26 @@
+apiVersion: kubero.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: deploy-jwt-coinbase
+spec:
+  appRef: jwt-coinbase
+  stages:
+    - name: build
+      actions:
+        - type: docker-build
+          with:
+            context: .
+            dockerfile: Dockerfile
+            image: registry.linjitsu.net/jwt-coinbase
+            tag: 1.0.0
+    - name: push
+      actions:
+        - type: docker-push
+          with:
+            image: registry.linjitsu.net/jwt-coinbase
+            tag: 1.0.0
+    - name: deploy
+      actions:
+        - type: kubectl-apply
+          with:
+            file: kubero-app.yaml
