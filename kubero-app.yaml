@@ -5,9 +5,12 @@ metadata:
   namespace: jwt-coinbase
 spec:
   image:
-    repository: registry.linjitsu.net/jwt-coinbase
-    tag: "1.0.0"
+    repository: jwt-coinbase
+    tag: "build-initial"
     pullPolicy: IfNotPresent
+  # Optional: keep the workload on the builder node to ensure the image is present
+  nodeSelector:
+    kubero.io/builder-node: "true"
   replicas: 1
   service:
     port: 8080

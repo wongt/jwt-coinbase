@@ -11,16 +11,17 @@ spec:
           with:
             context: .
             dockerfile: Dockerfile
-            image: registry.linjitsu.net/jwt-coinbase
-            tag: 1.0.0
-    - name: push
-      actions:
-        - type: docker-push
-          with:
-            image: registry.linjitsu.net/jwt-coinbase
-            tag: 1.0.0
+            image: jwt-coinbase               # local tag (no registry)
+            tag: "build-{{ run.id }}"         # unique per run
+            load: true                        # make image available to the cluster/pod env
     - name: deploy
       actions:
-        - type: kubectl-apply
+        # Update the app to use the freshly-built image tag
+        - type: kubectl-set-image
           with:
-            file: kubero-app.yaml
+            resource: deployment/jwt-kuberoapp-web
+            container: kuberoapp-web
+            image: "jwt-coinbase:build-{{ run.id }}"
+        - type: kubectl-rollout-status
+          with:
+            resource: deployment/jwt-kuberoapp-web
